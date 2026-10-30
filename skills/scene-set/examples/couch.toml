@@ -1,0 +1,68 @@
+# Three people on a couch watching a TV on the left wall: one shared eyeline, the easiest set to check.
+# Every camera stays in front of the couch, so everyone looks screen-left at the TV in every shot.
+name = "living room: a couch and a TV"
+room = [5.0, 4.4]
+walls = { left = "a wall TV, a low cabinet", right = "a bookshelf, a floor lamp", back = "a wide window, sheer curtains" }
+light = "back"
+
+[[thing]]
+id = "tv"
+at = [0.12, 2.2]
+size = [0.08, 1.3]
+h0 = 0.9
+h = 1.65
+look = "a black wall TV, the screen glowing"
+
+[[thing]]
+id = "couch"
+at = [4.0, 2.2]
+size = [0.95, 2.4]
+h = 0.85
+look = "a grey fabric three-seat couch"
+
+[[thing]]
+id = "table"
+at = [2.85, 2.2]
+size = [0.6, 1.1]
+h = 0.42
+look = "a low oak coffee table, two soda cans, a bowl of popcorn"
+
+[[person]]
+id = "jo"
+at = [4.0, 2.95]
+pose = "sits"
+height = 1.72
+faces = "tv"
+look = "curly black hair, purple sweater"
+
+[[person]]
+id = "ana"
+at = [4.0, 2.2]
+pose = "sits"
+height = 1.66
+faces = "tv"
+look = "brown ponytail, small gold earrings, orange top"
+
+[[person]]
+id = "leo"
+at = [4.0, 1.45]
+pose = "sits"
+height = 1.82
+faces = "tv"
+look = "short black hair, round glasses, light stubble, green sweater"
+
+[[camera]]
+id = "W"
+at = [1.1, 0.45]
+h = 1.15
+aim = "ana"
+lens = 28
+shots = "the wide: all three watch the TV"
+
+[[camera]]
+id = "C"
+at = [2.3, 1.25]
+h = 1.05
+aim = "ana"
+lens = 70
+shots = "ana's reactions"

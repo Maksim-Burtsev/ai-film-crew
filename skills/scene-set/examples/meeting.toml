@@ -1,0 +1,71 @@
+# Four people at a meeting table. Ana and Leo argue across the table; Jo and Sam listen.
+# Lines only in close-ups (A on Ana, B on Leo), every camera on the front side of the Ana-Leo line.
+name = "office: a meeting table"
+room = [6.0, 4.6]
+walls = { left = "glass wall to the corridor", right = "floor-to-ceiling windows", back = "white wall, a whiteboard" }
+light = "right"
+
+[[thing]]
+id = "table"
+at = [3.0, 2.6]
+size = [2.6, 1.2]
+h = 0.75
+look = "a long white table, laptops, two glasses of water, a soda can"
+
+[[person]]
+id = "ana"
+at = [1.95, 3.35]
+pose = "sits"
+height = 1.66
+faces = "leo"
+look = "brown ponytail, small gold earrings, orange blazer"
+
+[[person]]
+id = "leo"
+at = [4.05, 3.35]
+pose = "sits"
+height = 1.82
+faces = "ana"
+look = "short black hair, round glasses, light stubble, green shirt"
+
+[[person]]
+id = "jo"
+at = [2.4, 1.85]
+pose = "sits"
+height = 1.72
+faces = "ana"
+look = "curly black hair, purple shirt"
+
+[[person]]
+id = "sam"
+at = [3.6, 1.85]
+pose = "sits"
+height = 1.78
+faces = "leo"
+look = "short blond hair, blue shirt"
+
+[[camera]]
+id = "W"
+at = [3.0, 0.5]
+h = 1.6
+aim = [3.0, 2.8, 1.0]
+lens = 24
+shots = "the wide, silent beats only"
+
+[[camera]]
+id = "A"
+at = [3.9, 1.1]
+h = 1.2
+aim = "ana"
+lens = 85
+talk = true
+shots = "ana's lines"
+
+[[camera]]
+id = "B"
+at = [2.1, 1.1]
+h = 1.2
+aim = "leo"
+lens = 85
+talk = true
+shots = "leo's lines"
