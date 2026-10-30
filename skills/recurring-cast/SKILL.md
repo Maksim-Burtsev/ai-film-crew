@@ -55,6 +55,19 @@ stills: thresholds don't carry over between models.
 - **Props on people are identical in every shot**: glasses whole (both rims, bridge, temples), the same jewellery.
   Check at full size, both sides of the head; contact sheets hide these.
 
+## Keep the face through an image edit
+Edit models redraw what they weren't asked to: an edit that adds glasses narrows the eyes and puffs the lids, and the
+person reads as someone else. `scripts/keepface.py` registers the edit onto the base still by the face and takes the
+face back from the base, pixel for pixel:
+- `keepface.py glasses base.png edit.png out.png`: the base's face with only the edit's new glasses frame on it.
+- `keepface.py face base.png edit.png out.png`: the edit everywhere (a new pose, hands, a prop) except the base's
+  face. It fails when the two layers disagree at the seam (two mics, a smeared collar).
+- `keepface.py check base.png out.png`: do the eyes, nose and mouth still line up with the base?
+
+New poses are edits of the approved still, never fresh generations. The thresholds were measured on one person's
+edits (black frames on light skin); the glasses mask looks for a dark frame, so check light or rimless frames at full
+size.
+
 ## Taste on raw candidates
 A choice of face, gesture or voice goes to the owner as cheap raw candidates, labelled raw. Checks and polish run
 only on the pick: one pose was polished through four reviews, then dropped in two minutes.
