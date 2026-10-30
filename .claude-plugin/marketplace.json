@@ -1,0 +1,13 @@
+{
+  "name": "ai-film-crew",
+  "owner": { "name": "Maksim Burtsev" },
+  "description": "Agent skills that catch what AI video gets wrong before you pay for it",
+  "plugins": [
+    {
+      "name": "ai-film-crew",
+      "source": "./",
+      "description": "product-size, scene-set, recurring-cast and blind-review: product size in mm, one set for every angle, the same face in every shot, a blind review",
+      "category": "video"
+    }
+  ]
+}
