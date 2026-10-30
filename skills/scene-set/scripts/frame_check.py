@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.11,<3.13"
+# requires-python = ">=3.12,<3.13"
 # dependencies = ["numpy==2.5.3", "pillow==12.3.0", "opencv-python-headless==5.0.0.93", "mediapipe==1.1.0"]
 # ///
 """Check a generated still (or a take) against the set: are the faces where this camera should see them?
@@ -24,8 +24,12 @@ the MediaPipe face landmarker (Apache 2.0).
 import hashlib, os, sys, urllib.request
 from pathlib import Path
 
+os.environ.setdefault("GLOG_minloglevel", "2")          # MediaPipe and TFLite chatter on stderr
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
+os.environ.setdefault("OPENCV_LOG_LEVEL", "ERROR")
 import cv2
 import numpy as np
+
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import scene  # noqa: E402

@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.11,<3.13"
+# requires-python = ">=3.12,<3.13"
 # dependencies = ["numpy==2.5.3", "pillow==12.3.0", "opencv-python-headless==5.0.0.93", "mediapipe==1.1.0",
 #                 "torch==2.14.1", "transformers==4.57.6"]
 # ///
