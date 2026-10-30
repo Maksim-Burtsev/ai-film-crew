@@ -1,0 +1,23 @@
+name: A lesson or a new check
+description: Something that failed in your AI video, what worked instead, and how you know.
+labels: [lesson]
+body:
+  - type: textarea
+    id: failed
+    attributes:
+      label: What failed
+    validations:
+      required: true
+  - type: textarea
+    id: worked
+    attributes:
+      label: What worked instead
+    validations:
+      required: true
+  - type: textarea
+    id: proof
+    attributes:
+      label: How you know
+      description: How many takes or stills, which model, which month.
+    validations:
+      required: true

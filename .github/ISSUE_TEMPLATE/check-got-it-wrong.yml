@@ -1,0 +1,29 @@
+name: A check got it wrong
+description: An instrument passed a defect, failed a good frame, or crashed.
+labels: [bug]
+body:
+  - type: input
+    id: script
+    attributes:
+      label: Which script
+      placeholder: skills/product-size/scripts/size.py
+    validations:
+      required: true
+  - type: textarea
+    id: run
+    attributes:
+      label: The command and its output
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and why
+    validations:
+      required: true
+  - type: textarea
+    id: frame
+    attributes:
+      label: The frame, if you can share it
+      description: Only frames you have the rights to. No client material, no real person without consent.
