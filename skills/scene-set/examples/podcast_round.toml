@@ -1,0 +1,55 @@
+# Template A: the round-table interview of The Diary of a CEO and Dwarkesh. The pick
+# for a business or AI interview: it reads serious, and no mic in front of the mouth keeps the lip-sync and the 9:16
+# crop clean. Copy it per show: restyle walls, light and props; keep the geometry (seats, distances, camera angles).
+name = "template A: round table"
+room = [6.0, 5.0]
+walls = { left = "shelves with books, two warm sconces", right = "dark window grid, city at dusk", back = "charcoal panelled wall, one practical lamp" }
+light = [3.0, 3.0, 2.1]           # the pendant over the table; the face is the brightest thing in frame
+
+[[thing]]
+id = "table"
+at = [3.0, 3.0]
+size = [1.3, 1.3]                 # 1.3 m across, matte
+shape = "round"
+h = 0.75
+look = "round matte walnut table; a mug and printed notes in front of each person, nothing between the faces"
+
+[[person]]
+id = "host"
+at = [2.15, 3.0]
+pose = "sits"
+faces = "guest"
+look = "the show's host"
+
+[[person]]
+id = "guest"
+at = [3.85, 3.0]
+pose = "sits"
+faces = "host"
+look = "the show's guest"
+
+[[camera]]
+id = "W"
+at = [3.0, 0.7]
+h = 1.05
+aim = [3.0, 3.0, 1.0]
+lens = 26
+shots = "wide, silent beats only"
+
+[[camera]]
+id = "A"                          # the guest's lip-sync single: 30 deg off his eyeline, chest-up, face >= 30 % of the width
+at = [1.25, 1.5]
+h = 1.2
+aim = "guest"
+lens = 130
+talk = true
+shots = "the guest's lines"
+
+[[camera]]
+id = "H"
+at = [4.75, 1.5]
+h = 1.2
+aim = "host"
+lens = 130
+talk = true
+shots = "host's lines, reactions"

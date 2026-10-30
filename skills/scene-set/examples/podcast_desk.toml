@@ -1,0 +1,54 @@
+# Template B: the desk with boom-arm mics of Modern Wisdom, Lex Fridman, Huberman and Rogan
+#. Use it when the reel should shout "podcast": the mic sits below the mouth line,
+# on the side away from the single camera, so it never covers the chin in a tight crop.
+name = "template B: desk with boom mics"
+room = [5.0, 4.5]
+walls = { left = "shelves, two warm lamps", right = "backlit glass-block window, one amber LED strip", back = "dark brick" }
+light = "right"
+
+[[thing]]
+id = "table"
+at = [2.5, 2.6]
+size = [1.8, 0.9]                 # long side along the line between them, matte dark walnut
+h = 0.75
+look = "matte dark walnut desk; a tumbler and one can on a coaster each, the host's notes; boom-arm mics from the outer corners"
+
+[[person]]
+id = "host"
+at = [1.5, 2.6]
+pose = "sits"
+faces = "guest"
+look = "the show's host"
+
+[[person]]
+id = "guest"
+at = [3.5, 2.6]
+pose = "sits"
+faces = "host"
+look = "the show's guest"
+
+[[camera]]
+id = "W"
+at = [2.5, 0.5]
+h = 1.0
+aim = [2.5, 2.6, 1.0]
+lens = 24
+shots = "wide, silent beats only"
+
+[[camera]]
+id = "A"
+at = [1.3, 1.2]
+h = 1.2
+aim = "guest"
+lens = 120
+talk = true
+shots = "the guest's lines"
+
+[[camera]]
+id = "H"
+at = [3.7, 1.2]
+h = 1.2
+aim = "host"
+lens = 120
+talk = true
+shots = "host's lines, reactions"
