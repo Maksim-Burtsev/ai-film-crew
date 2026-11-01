@@ -46,3 +46,38 @@ def test_frame_check_eyelines():
 def test_frame_check_counts_faces():
     exp = list(views("meeting", "A").values())
     assert frame_check.judge(exp, [face(), face(u=0.8)])["faces"][0] is False
+
+
+OVER_THE_SHOULDER = """
+room = [5.0, 4.5]
+[[person]]
+id = "host"
+at = [1.5, 2.6]
+pose = "sits"
+faces = "guest"
+[[person]]
+id = "guest"
+at = [3.5, 2.6]
+pose = "sits"
+faces = "host"
+[[camera]]
+id = "R"
+at = [0.5, 2.85]
+h = 1.25
+aim = "guest"
+lens = 115
+"""
+
+
+def test_over_the_shoulder_back_is_in_frame_and_the_look_is_just_past_the_lens(tmp_path):
+    # Behind the host's shoulder on a long lens, the host's head centre falls off the frame while the head fills its
+    # right edge; the guest, looking at the host 4.8 deg off the lens, is not looking into it.
+    (tmp_path / "ots.toml").write_text(OVER_THE_SHOULDER)
+    s = scene.load(str(tmp_path / "ots.toml"))
+    v = {e["id"]: e for e in scene.view(s, scene.Cam(s, scene.find(s, "R")))}
+    assert v["host"]["face"] == "back" and v["host"]["u"] > 1.05 and v["host"]["visible"]
+    assert v["guest"]["looks"] == "just past the lens, screen-right,"
+    card = scene.card(s, "R")
+    assert "close to the lens and out of focus, filling the frame's right edge (about 24% of its width)" in card
+    assert "off frame" not in card
+    assert scene.warnings(s) == ([], [])

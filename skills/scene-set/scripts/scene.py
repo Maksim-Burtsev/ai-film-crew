@@ -70,6 +70,7 @@ W, H = 1080, 1920                          # frame the projection works in (9:16
 HEAD = {"sits": 1.22, "stands": 1.62}      # head centre above the floor for a person STATURE tall
 STATURE, SEAT = 1.74, 0.47                 # seated, only the body above the seat scales with the height
 FACE_M = 0.21                              # face box height (brows to chin) in metres, YuNet-sized
+HEAD_R = 0.11                              # a head's half width, m: a back near the lens covers an edge with it
 WALL_H = 2.8
 MIN_LINE_PX = 250                          # a speaker's face below this morphs in video models (~150 px did)
 COLOURS = [(196, 74, 60), (52, 110, 190), (60, 150, 90), (170, 110, 40), (120, 80, 160)]
@@ -199,14 +200,25 @@ def view(s, cam):
         lit = "even"
         if abs(light @ cam.r) > 0.45 and light @ -cam.f > -0.3:     # light from a side and not from behind
             lit = "screen-right" if light @ cam.r > 0 else "screen-left"
-        e = {"id": p["id"], "pose": p["pose"], "yaw": yaw, "lit": lit,
+        e = {"id": p["id"], "pose": p["pose"], "yaw": yaw, "lit": lit, "side": "screen-right" if side > 0 else "screen-left",
              "looks": "into the lens" if yaw < 8 else ("screen-right" if side > 0 else "screen-left"),
              "visible": False, "face": "back" if yaw > 165 else ("profile" if yaw > 70 else "face")}
         if q:
             u, v, z = q
-            e.update(u=u / W, v=v / H, face_px=cam.fpx * FACE_M / z, dist=z,
+            r = cam.fpx * HEAD_R / z / W                            # the head's radius, in frame widths
+            e.update(u=u / W, v=v / H, face_px=cam.fpx * FACE_M / z, dist=z, r=r,
                      visible=-0.05 < u / W < 1.05 and -0.05 < v / H < 1.05)
+            if e["face"] == "back" and not e["visible"]:            # a back near the lens is in the frame when any of
+                e["visible"] = u / W - r < 0.98 and u / W + r > 0.02 and -0.05 < v / H < 1.05   # its head is: the
+                # shoulder of an over-the-shoulder shot fills an edge while the head's centre is off it
         out.append(e)
+    # Looking at someone seen from behind in this frame (the over-the-shoulder shot) is looking just past the lens:
+    # the eyeline is 3-8 deg off it there, as on a real podcast's reverse shot. Into the lens only under 3 deg.
+    for e in out:
+        p = find(s, e["id"])
+        t = next((x for x in out if x["id"] == p.get("faces")), None)
+        if e["looks"] == "into the lens" and e["yaw"] >= 3 and t and t["visible"] and t["face"] == "back":
+            e["looks"] = f"just past the lens, {e['side']},"
     return out
 
 
@@ -232,6 +244,10 @@ def card(s, cid):
                f"head at {e['v']:.0%} from the top")
         if e["face"] == "back":
             who += ", seen from behind: back of the head and shoulder only"
+            if e["r"] > 0.15:                                       # near the lens: a big soft shape at an edge
+                who += (f", close to the lens and out of focus, filling the frame's "
+                        f"{'right' if e['u'] > 0.5 else 'left'} edge (about "
+                        f"{(min(1, e['u'] + e['r']) - max(0, e['u'] - e['r'])) * 100:.0f}% of its width)")
         else:
             tgt = p["faces"] if isinstance(p["faces"], str) else "ahead"
             who += f", face ~{e['face_px']:.0f} px tall, looks {e['looks']} at {tgt}"

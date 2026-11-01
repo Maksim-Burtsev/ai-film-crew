@@ -1,10 +1,10 @@
 {
   "name": "ai-film-crew",
-  "version": "0.1.0",
-  "description": "Agent skills that catch what AI video gets wrong before you pay for it: product size in mm, one set for every angle, the same face in every shot, a blind review",
+  "version": "0.2.0",
+  "description": "Agent skills that catch what AI video gets wrong before you pay for it: product size in mm, one set for every angle, the same face in every shot, a blind review, the sound checked in numbers",
   "author": { "name": "Maksim Burtsev" },
   "homepage": "https://github.com/Maksim-Burtsev/ai-film-crew",
   "repository": "https://github.com/Maksim-Burtsev/ai-film-crew",
   "license": "MIT",
-  "keywords": ["ai-video", "video-generation", "qa", "consistency", "skills"]
+  "keywords": ["ai-video", "video-generation", "qa", "consistency", "audio", "skills"]
 }

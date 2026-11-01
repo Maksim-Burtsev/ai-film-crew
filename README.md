@@ -4,16 +4,17 @@
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-2a66d9)](#install)
 [![licence: MIT](https://img.shields.io/badge/licence-MIT-13885a)](LICENSE)
 
-**Agent skills that catch what AI video gets wrong, on the stills, before you pay for the video.**
+**Agent skills that catch what AI video gets wrong, before you pay for the video and before your client notices.**
 
-<img src="docs/img/crew.png" width="880" alt="The crew as four cards: the prop master with a ruler and a can, the set designer with a floor plan, the casting director with a headshot, the test audience with a questionnaire.">
+<img src="docs/img/crew.png" width="880" alt="The crew as five cards: the prop master with a ruler and a can, the set designer with a floor plan, the casting director with a headshot, the test audience with a questionnaire, and the sound mixer in headphones at a mixing desk.">
 
 AI video breaks the same way every time. The product comes out a third too big. A face drifts from shot to shot.
 The room rearranges itself between angles. Usually the client is the one who notices.
 
-This crew checks every still the way a film crew checks a take, so the defects die at the cheap step. Each skill is
-a method your agent reads (`SKILL.md`) and, where eyes aren't enough, a small instrument that measures and prints PASS
-or FAIL. It was built over a month of paid AI reels, and every check exists because a defect got past us once.
+This crew checks every still the way a film crew checks a take, so the defects die at the cheap step. It listens to
+the cut the same way. Each skill is a method your agent reads (`SKILL.md`) and, where eyes and ears aren't enough, a
+small instrument that measures and prints PASS or FAIL. It was built over a month of paid AI reels, and every check
+exists because a defect got past us once.
 
 ## Install
 
@@ -29,7 +30,7 @@ Or copy a skill's folder into `.claude/skills/` in your project, or into `~/.cla
 Then ask your agent: "check these stills against the set", or "is the bottle the right size here?". The instruments
 are [uv scripts](https://docs.astral.sh/uv/guides/scripts/): they need [uv](https://docs.astral.sh/uv/) and fetch
 Python 3.12 and their packages on the first run. Their models download once too; the size check is the heavy one,
-with about 1 GB of models and 1 GB of packages.
+with about 1 GB of models and 1 GB of packages. The sound checks need `ffmpeg` on your PATH.
 
 ## The prop master · product-size
 
@@ -109,18 +110,42 @@ facts and code decides.
   [`references/checklist.md`](skills/blind-review/references/checklist.md),
   [`scripts/grade.py`](skills/blind-review/scripts/grade.py)
 
+## The sound mixer · sound-mix
+
+<img src="docs/img/sound-mix.png" width="880" alt="Four cards, one per defect a listener hears, each with its number and a FAIL: a hum under the voices at -33 dBFS, a click where a cut chops a word, chatter in a pause, and a generated voice with no highs that turns s into sh. Below, an approved cut with a quiet floor and clean pauses passes all five checks. The check exits 1 on the first cut and 0 on the approved one.">
+
+The agent that cuts a video can't hear it. Generated voices come out dull, like a cheap mic, and turn "s" into "sh".
+A room-tone bed reads as a fan. A voice changer turns the model's murmur between lines into chatter, and cuts leave
+clicks. A viewer hears all of it in the first seconds.
+
+The instrument listens in numbers. It decodes the cut without its music and measures the steady floor under the
+voices, every abrupt stop, the pauses between words and how much of the voice sits above 5 kHz. A second script
+masters the mix to -14 LUFS with one gain and a true-peak limiter, because ffmpeg's `loudnorm` quietly switches to a
+dynamic mode that pumps.
+
+- **You give:** the cut without music, and word times from any Whisper if you want the pauses checked
+- **You get:** one PASS or FAIL line per check, with the times to listen at, and a mastered WAV
+- **Catches:** a hum or a fan under the voices, clicks at cuts, chatter, laughs and ad-libs between lines, dull
+  generated voices, a mix that's too quiet or clips
+- **Misses:** taste. Whether the music fits, whether an effect lands on its frame, whether a voice suits the
+  character: a person's ear decides
+- **Inside:** [`SKILL.md`](skills/sound-mix/SKILL.md), [`scripts/sound_check.py`](skills/sound-mix/scripts/sound_check.py),
+  [`scripts/master.py`](skills/sound-mix/scripts/master.py) (numpy and ffmpeg, no models)
+
 ## How the checks were tested
 
-Each instrument was lifted out of a production pipeline and run against the original on private golden cases:
-frames and takes that once reached a client, and approved ones. `frame_check.py` gave the same verdicts on all 7,
-`size.py` on all 9 (within 1 mm), and `identity.py` with ArcFace reproduced the original scores exactly. The golden
-files are client material, so they stay private. The tests in [`tests/`](tests) cover everything that needs no
-models and run on every push.
+Each instrument was lifted out of a production pipeline and run against the original on private golden cases: frames
+and takes that once reached a client, and approved ones. `frame_check.py` gave the same verdicts on all 7, `size.py`
+on all 9 (within 1 mm), and `identity.py` with ArcFace reproduced the original scores exactly. `sound_check.py` was
+lifted from the same pipeline's final gate and gave the same numbers on three real reels: an approved one, one with a
+dull generated voice and one with a burst in a pause. The reels behind the hum and click thresholds are gone, so those
+two checks are tested on synthetic sound only. The golden files are client material, so they stay private. The tests in
+[`tests/`](tests) cover everything that needs no models and run on every push.
 
 ## The crew grows
 
-Next on set: the sound mixer (`sound-mix`), the editor (`reel-edit`), the voice coach (`voice-takes`) and the line
-producer (`spend-cap`).
+Next on set: the editor (`reel-edit`), the voice coach (`voice-takes`) and the script supervisor (the final gate:
+the transcript against the script, dead air, pacing).
 
 ## Contributing
 

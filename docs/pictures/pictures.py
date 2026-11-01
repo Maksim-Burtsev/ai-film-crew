@@ -3,7 +3,30 @@ import math
 from draw import C, T, arrow, curve, stamp, badge, framed, svg
 from people import person, ana, leo, jo, serum, grip, ring, eye_points, soda, ANA, LEO, JO, f
 
-MIA = "#4f7fc9"
+MIA, MIXER = "#4f7fc9", "#d29b2e"
+
+
+def headphones(cx, top, s, cups=False):
+    """A headband behind the head (drawn first), or the ear cups over the ears (drawn after the person)."""
+    hy, rx = top + 60 * s, 39 * s
+    if not cups:
+        return (f'<path d="M{f(cx-rx-5*s)},{f(hy+4*s)} C{f(cx-rx-6*s)},{f(hy-72*s)} {f(cx+rx+6*s)},{f(hy-72*s)} '
+                f'{f(cx+rx+5*s)},{f(hy+4*s)}" stroke="#2a2f38" stroke-width="{f(7*s)}" fill="none" stroke-linecap="round"/>')
+    return "".join(f'<rect x="{f(cx+d*(rx+3*s)-9*s)}" y="{f(hy-12*s)}" width="{f(18*s)}" height="{f(30*s)}" rx="{f(7*s)}" '
+                   f'fill="#2a2f38"/>' for d in (-1, 1))
+
+
+def desk(x, y):
+    """A small mixing desk held at the chest: four faders and a level meter."""
+    o = (f'<rect x="{x}" y="{y}" width="88" height="56" rx="5" fill="#2a2f38"/>'
+         f'<circle cx="{x-4}" cy="{y+40}" r="7" fill="#83553a"/><circle cx="{x+92}" cy="{y+40}" r="7" fill="#83553a"/>')
+    for i, k in enumerate((0.3, 0.6, 0.45, 0.75)):
+        fx = x + 12 + i * 15
+        o += (f'<line x1="{fx}" y1="{y+10}" x2="{fx}" y2="{y+46}" stroke="#596173" stroke-width="2"/>'
+              f'<rect x="{fx-5}" y="{f(y+10+36*k-3)}" width="10" height="6" rx="1.5" fill="#e6e9ef"/>')
+    for j, col in enumerate(("#36b37e",) * 4 + (C["amber"], C["red"])):
+        o += f'<rect x="{x+74}" y="{y+44-j*6.5}" width="7" height="4.5" rx="1" fill="{col}"/>'
+    return o
 
 
 def room(x, y, w, h, window="left"):
@@ -32,20 +55,25 @@ def couch_seat(x, y, w, h):
 
 
 # ------------------------------------------------------------------------------------------------- hero B
-def hero_crew():
+def hero_crew(cols=3):
+    """The crew as five cards: three to a row for the README (the second row centred), one row for the social card."""
     P, b = "hb", []
     cards = (("The prop master", "product-size", ("Measures the product in", "mm, by the holder's eyes."), "#e9eef5"),
              ("The set designer", "scene-set", ("One set for every shot,", "every still checked on it."), "#efe9f6"),
              ("The casting director", "recurring-cast", ("Keeps every character", "the same person."), "#e6f0ea"),
-             ("The test audience", "blind-review", ("Fills in a questionnaire", "about every take; code", "grades it."), "#f4ece4"))
+             ("The test audience", "blind-review", ("Fills in a questionnaire", "about every take; code", "grades it."), "#f4ece4"),
+             ("The sound mixer", "sound-mix", ("Hears the hum, the clicks", "and the cheap-mic voice,", "in numbers."), "#f3eedb"))
+    w = 230 if cols >= len(cards) else 266
+    W, H = 48 + cols * w + (cols - 1) * 16, 32 + -(-len(cards) // cols) * 364 - 16
     for k, (role, skill, job, tint) in enumerate(cards):
-        x, y, w = 24 + k * 212, 16, 196
+        row_n = min(cols, len(cards) - k // cols * cols)
+        x, y = 24 + (cols - row_n) * (w + 16) / 2 + (k % cols) * (w + 16), 16 + (k // cols) * 364
         b.append(f'<rect x="{x}" y="{y}" width="{w}" height="348" rx="14" fill="#fff" stroke="{C["line"]}" stroke-width="1.5"/>')
         inner = f'<rect x="{x}" y="{y}" width="{w}" height="216" fill="{tint}"/>'
         stripes = "".join(f'<polygon points="{x+i*28},{y+18} {x+i*28+14},{y} {x+i*28+28},{y} {x+i*28+14},{y+18}" fill="#fff"/>'
                           for i in range(-1, 8))
         inner += f'<rect x="{x}" y="{y}" width="{w}" height="18" fill="{C["ink"]}"/>' + stripes
-        cx, top = x + 98, y + 48
+        cx, top = x + w / 2, y + 48
         if k == 0:
             inner += ana(P, cx, top, 0.66, turn=0.2, expr="grin", bottom=y + 230)
             inner += (f'<g transform="rotate(-28 {cx-30} {y+180})"><rect x="{cx-72}" y="{y+172}" width="86" height="15" rx="2" '
@@ -73,7 +101,7 @@ def hero_crew():
                       + framed("hbq", px + 4, py + 4, 44, 46, f'<rect x="{px+4}" y="{py+4}" width="44" height="46" fill="#efe5d9"/>' + photo, r=2, stroke=0.8))
             inner += badge(px + 50, py + 4, True, 10)
             inner += f'<circle cx="{px-2}" cy="{py+46}" r="7" fill="#e9b590"/><circle cx="{px+54}" cy="{py+48}" r="7" fill="#e9b590"/>'
-        else:
+        elif k == 3:
             inner += person(P, cx, top, 0.66, skin="light", hair="auburn", style="bun", shirt=MIA, turn=0.15, bottom=y + 230)
             px, py = cx - 34, y + 150
             inner += (f'<rect x="{px}" y="{py}" width="68" height="62" rx="4" fill="#c9a476"/>'
@@ -88,14 +116,19 @@ def hero_crew():
                 else:
                     inner += f'<path d="M{px+12},{yy-5} l6,6 m0,-6 l-6,6" stroke="{C["red"]}" stroke-width="1.8"/>'
             inner += f'<circle cx="{px-2}" cy="{py+44}" r="7" fill="#f7d9c4"/><circle cx="{px+70}" cy="{py+40}" r="7" fill="#f7d9c4"/>'
+        elif k == 4:
+            inner += (person(P, cx, top, 0.66, skin="deep", hair="black", style="short", shirt=MIXER, turn=0.1,
+                             bottom=y + 230) + headphones(cx, top, 0.66) + headphones(cx, top, 0.66, cups=True))
+            inner += desk(cx - 44, y + 154)
         b.append(framed(P, x, y, w, 216, inner, bg=tint, r=14, stroke=0))
         b.append(f'<rect x="{x}" y="{y}" width="{w}" height="348" rx="14" fill="none" stroke="{C["line"]}" stroke-width="1.5"/>')
         b.append(T(x + 16, y + 246, role, 17, C["ink"], "l", weight=700))
         b.append(T(x + 16, y + 268, skill, 13, C["soft"], "m", weight=600))
         for i, ln in enumerate(job):
             b.append(T(x + 16, y + 296 + i * 19, ln, 13.5, C["ink"]))
-    return svg(880, 380, "".join(b), "The crew as four cards: the prop master with a ruler and a can, the set designer "
-               "with a floor plan, the casting director with a headshot, the test audience with a questionnaire.")
+    return svg(W, H, "".join(b), "The crew as five cards: the prop master with a ruler and a can, the set designer "
+               "with a floor plan, the casting director with a headshot, the test audience with a questionnaire and "
+               "the sound mixer in headphones at a mixing desk.")
 
 
 # ------------------------------------------------------------------------------------------------- prop B
@@ -373,6 +406,93 @@ def test_why():
                "fixed answers, it answers six and code catches it.")
 
 
+# ------------------------------------------------------------------------------------------------- sound
+def blob(x0, x1, cy, amp, col, seed=0.0, step=4.0, w=2.6, fall=True):
+    o, x = [], x0
+    while x <= x1:
+        t = (x - x0) / max(x1 - x0, 1)
+        env = min(1, t / 0.15, (1 - t) / 0.15 if fall else 1)
+        a = amp * max(env, 0.1) * (0.45 + 0.55 * abs(math.sin(x * 0.19 + seed) * 0.7 + math.sin(x * 0.41 + seed) * 0.3))
+        o.append(f'<line x1="{f(x)}" y1="{f(cy-a)}" x2="{f(x)}" y2="{f(cy+a)}" stroke="{col}" stroke-width="{w}" stroke-linecap="round"/>')
+        x += step
+    return "".join(o)
+
+
+def card(x, y, w, h):
+    return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="#fff" stroke="{C["line"]}" stroke-width="1.5"/>'
+
+
+def sound_cards():
+    """Four FAIL cards, one per defect, and one approved cut that PASSes every check."""
+    b = [T(24, 30, "Four things a listener hears in the first seconds", 15, weight=700)]
+    W, H = 408, 192
+    cells = ((24, 46), (448, 46), (24, 60 + H), (448, 60 + H))
+    heads = (("hum", "a fan under the voices"), ("clicks", "a cut that chops a sound"),
+             ("pauses", "chatter between lines"), ("voice_hf", "the cheap-mic voice"))
+    nums = (("-33 dBFS", "steady floor; the line is -55"), ("4 clicks", "all at edits; published reels: 0"),
+            ("2 dB under", "speech; the line is 6 dB"), ("-14.4 dB", "above 5 kHz; the line is -12"))
+    for k, ((x, y), (name, head), (num, sub)) in enumerate(zip(cells, heads, nums)):
+        b.append(card(x, y, W, H))
+        b.append(T(x + 16, y + 26, name, 12.5, C["soft"], "m", weight=700))
+        b.append(T(x + 16, y + 48, head, 15.5, C["ink"], "l", weight=700))
+        ix, iy, cy = x + 16, y + 64, y + 122
+        b.append(f'<rect x="{ix}" y="{iy}" width="196" height="112" rx="8" fill="{C["paper"]}"/>')
+        if k == 0:
+            b.append(blob(ix + 12, ix + 74, cy, 34, ANA, 0.3) + blob(ix + 122, ix + 184, cy, 34, LEO, 1.7))
+            b.append(blob(ix + 78, ix + 118, cy, 5, C["red"], 0.8, fall=False))  # the fan, in the pause
+            b.append(f'<rect x="{ix+6}" y="{cy-7}" width="184" height="14" fill="{C["red"]}" opacity="0.28"/>')
+            b.append(T(ix + 98, cy + 48, "under everything", 16, C["red"], "h", "middle", 700))
+        elif k == 1:
+            b.append(blob(ix + 12, ix + 96, cy, 34, ANA, 0.9, fall=False) + blob(ix + 118, ix + 184, cy, 30, LEO, 2.2))
+            b.append(ring(ix + 98, cy, 11, 40, 0))
+            b.append(T(ix + 140, iy + 18, "cut mid-word", 16, C["red"], "h", "middle", 700))
+        elif k == 2:
+            b.append(blob(ix + 10, ix + 78, cy, 34, ANA, 0.4) + blob(ix + 120, ix + 186, cy, 34, LEO, 1.1))
+            for xx, a in ((ix + 94, 14), (ix + 99, 22), (ix + 104, 16)):
+                b.append(f'<line x1="{xx}" y1="{cy-a}" x2="{xx}" y2="{cy+a}" stroke="{C["red"]}" stroke-width="3" stroke-linecap="round"/>')
+            b.append(ring(ix + 99, cy, 14, 30, 0))
+            b.append(T(ix + 99, iy + 18, "mm-hm?", 16, C["red"], "h", "middle", 700))
+        else:
+            def spec(x0, cut, col):
+                pts = [(x0 + i * 4, cy + 30 - (36 * math.exp(-i / 9) + 6) * (1 if i * 4 < cut else 0.12)) for i in range(22)]
+                d = f"M{x0},{cy+30} " + " ".join(f"L{px:.1f},{py:.1f}" for px, py in pts) + f" L{pts[-1][0]:.1f},{cy+30} Z"
+                return f'<path d="{d}" fill="{col}" opacity="0.85"/>'
+            b.append(spec(ix + 10, 88, "#9db7ef") + spec(ix + 104, 44, LEO))
+            for x0 in (ix + 10, ix + 104):
+                b.append(f'<line x1="{x0+44}" y1="{cy-30}" x2="{x0+44}" y2="{cy+32}" stroke="{C["soft"]}" stroke-width="1.2" stroke-dasharray="3 3"/>')
+            b.append(T(ix + 54, iy + 104, "studio", 11.5, C["soft"], "l", "middle", 600))
+            b.append(T(ix + 148, iy + 104, "generated", 11.5, C["soft"], "l", "middle", 600))
+            b.append(T(ix + 54, iy + 18, "5 kHz", 11, C["soft"], "m", "middle"))
+            b.append(T(ix + 160, iy + 30, "s → sh", 16, C["red"], "h", "middle", 700))
+        b.append(T(x + 228, y + 96, num, 21, C["red"], "m", weight=800))
+        b.append(T(x + 228, y + 118, sub, 12, C["soft"]))
+        b.append(stamp(x + 228, y + 136, "FAIL", "", False, rot=-4))
+    y = 74 + 2 * H
+    b.append(f'<rect x="24" y="{y}" width="832" height="150" rx="12" fill="#fff" stroke="{C["green"]}" stroke-width="2.6"/>')
+    b.append(T(40, y + 26, "approved cut", 12.5, C["soft"], "m", weight=700))
+    b.append(T(40, y + 48, "how it should sound", 15.5, C["ink"], "l", weight=700))
+    b.append(f'<rect x="40" y="{y+62}" width="400" height="76" rx="8" fill="{C["paper"]}"/>')
+    cy = y + 100
+    b.append(f'<line x1="52" y1="{cy}" x2="428" y2="{cy}" stroke="{C["line"]}" stroke-width="1.5"/>')
+    b.append(blob(54, 184, cy, 26, ANA, 0.3) + blob(296, 426, cy, 26, LEO, 1.7))
+    b.append(T(240, cy - 12, "clean pause", 14, C["green"], "h", "middle", 700))
+    rows = (("loudness", "-14.0 LUFS, -1.2 dBTP"), ("hum", "-61 dBFS"), ("clicks", "0"), ("pauses", "24 dB under speech"),
+            ("voice_hf", "-6.7 dB"))
+    for i, (name, val) in enumerate(rows):
+        b.append(T(470, y + 30 + i * 22, name, 12.5, C["soft"], "m", weight=700))
+        b.append(T(560, y + 30 + i * 22, val, 12.5, C["green"], "m", weight=700))
+    b.append(stamp(752, y + 58, "PASS", "", True, rot=-4))
+    y += 164
+    b.append(f'<rect x="24" y="{y}" width="832" height="64" rx="10" fill="{C["ink"]}"/>')
+    for i, (cut, res, col) in enumerate((("rejected", "FAIL ×4 · exit 1", "#ff8a84"), ("approved", "PASS ×5 · exit 0", "#7fdba6"))):
+        b.append(T(40, y + 26 + i * 24, f"$ sound_check.py {cut}.mp4 --words words.json", 12.5, "#9aa3b5", "m"))
+        b.append(T(840, y + 26 + i * 24, res, 12.5, col, "m", "end", 700))
+    alt = ("sound-mix: four cards, one per defect a listener hears: a hum under the voices at -33 dBFS, clicks where "
+           "a cut chops a word, chatter in a pause, and a generated voice with no highs that turns s into sh. Each one "
+           "FAILs. Below, an approved cut with a quiet floor and clean pauses PASSes all five checks. ")
+    return svg(880, y + 80, "".join(b), alt + "The rejected cut exits 1, the approved one exits 0.")
+
+
 # ------------------------------------------------------------------------------------------------- icon and social card
 def icon():
     """The plugin icon: a clapper over a checked frame."""
@@ -390,11 +510,14 @@ def icon():
 
 def social():
     """The 1280x640 card GitHub shows when the repo link is shared."""
-    crew = hero_crew().replace('<svg class="pic" viewBox="0 0 880 380"',
-                               '<svg x="258" y="276" width="764" height="330" viewBox="0 0 880 380"', 1)
+    crew = hero_crew(cols=5)
+    w0 = crew[crew.index('viewBox="0 0 ') + 13:].split('"')[0].split()
+    crew = crew.replace(f'<svg class="pic" viewBox="0 0 {w0[0]} {w0[1]}"',
+                        f'<svg x="30" y="262" width="1220" height="{1220 * float(w0[1]) / float(w0[0]):.0f}" '
+                        f'viewBox="0 0 {w0[0]} {w0[1]}"', 1)
     return (f'<svg viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ai-film-crew">'
             f'<rect width="1280" height="640" fill="{C["paper"]}"/>'
-            + T(640, 118, "ai-film-crew", 76, C["ink"], "l", "middle", 800)
-            + T(640, 182, "Agent skills that catch what AI video gets wrong,", 30, C["soft"], "l", "middle", 500)
-            + T(640, 224, "on the stills, before you pay for the video.", 30, C["soft"], "l", "middle", 500)
+            + T(640, 112, "ai-film-crew", 76, C["ink"], "l", "middle", 800)
+            + T(640, 176, "Agent skills that catch what AI video gets wrong,", 30, C["soft"], "l", "middle", 500)
+            + T(640, 218, "before you pay for it and before your client notices.", 30, C["soft"], "l", "middle", 500)
             + crew + "</svg>")

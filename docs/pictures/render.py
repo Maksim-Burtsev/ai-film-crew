@@ -13,11 +13,12 @@ ROOT = Path(__file__).resolve().parents[2]
 FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Golos+Text:'
          'wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap">')
 JOBS = (  # (output, drawing, width, height, scale)
-    ("docs/img/crew.png", pictures.hero_crew, 880, 380, 2),
+    ("docs/img/crew.png", pictures.hero_crew, 880, 744, 2),
     ("docs/img/product-size.png", pictures.prop_overlay, 880, 510, 2),
     ("docs/img/scene-set.png", pictures.set_couch, 880, 500, 2),
     ("docs/img/recurring-cast.png", pictures.cast_rank, 880, 528, 2),
     ("docs/img/blind-review.png", pictures.test_why, 880, 470, 2),
+    ("docs/img/sound-mix.png", pictures.sound_cards, 880, 702, 2),
     ("docs/img/social-preview.png", pictures.social, 1280, 640, 1),
     (".claude-plugin/icon.png", pictures.icon, 512, 512, 2),
 )

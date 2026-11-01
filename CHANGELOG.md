@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 (2026-11-01)
+
+One more crew member, and a fix for over-the-shoulder shots.
+
+- **sound-mix**: `sound_check.py` measures what an agent can't hear in a cut: a hum under the voices, clicks at cuts,
+  chatter between lines, dull generated voices, loudness and true peak. `master.py` masters to a loudness target
+  without `loudnorm`.
+- **scene-set**: a back near the lens (an over-the-shoulder shot) now counts as in frame, and a look a few degrees past
+  the lens at it no longer reads as "into the lens".
+
 ## 0.1.0 (2026-10-31)
 
 The first four crew members.
