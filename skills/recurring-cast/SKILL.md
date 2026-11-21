@@ -22,6 +22,13 @@ gesture rounds.
   twins). Image models read about four character images at most.
 - **Mark flawed views** (one reads older, one has the wrong hair) and never pass them.
 - **Age only at the client's own number**, one pass. Never "younger" or "fresher" on your own.
+- **Shape words and calm directions age a face, and every pass drifts it.** Prompts that said "full cheeks" (meant
+  to stop the model narrowing her) and only calm, closed-lip looks, then two edits, a video take and a slow-down,
+  gave a 26-year-old who read puffy, heavy-lidded and about 29 in every frame: "as if hungover". The face score fell
+  from 0.64 to 0.47-0.54, and a still review that had "full cheeks" in its brief passed it. One generation from her
+  photos fixed it: the shape left to the photos, "rested, bright open eyes, lifted lids", her photos' own smile, the
+  camera at eye level. Review a lead's still as a face crop beside the photos, with questions on energy, puffiness
+  and lids.
 
 ## Check the face with a model, calibrated on your stills
 `scripts/identity.py` turns each face into numbers with a face model and compares them with the person's real

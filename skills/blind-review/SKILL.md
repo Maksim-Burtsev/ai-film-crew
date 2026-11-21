@@ -28,6 +28,11 @@ and code decides.
 6. **Then look yourself, at full size**: a second mic, an earbud and doubled bracelets once passed the questions and
    were caught only at full size.
 
+For a scene with more than one shot, add the continuity questions (K1-K9) on the stills and again on the cut, and
+have the reviewer first write one line per shot of what stands on each surface: see the script-supervisor skill.
+A reviewer's flag is a FAIL line or it is nothing. Two goofs once sat in a review as free text and both reached
+the owner.
+
 Every question in the bank was born from a defect a client or the owner saw after the automated checks had passed.
 Add your own from every note a client sends.
 

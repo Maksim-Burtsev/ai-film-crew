@@ -8,6 +8,8 @@
 
 <img src="docs/img/crew.png" width="880" alt="The crew as five cards: the prop master with a ruler and a can, the set designer with a floor plan, the casting director with a headshot, the test audience with a questionnaire, and the sound mixer in headphones at a mixing desk.">
 
+*The picture shows the first five. The script supervisor and the voice coach joined in 0.3.0.*
+
 AI video breaks the same way every time. The product comes out a third too big. A face drifts from shot to shot.
 The room rearranges itself between angles. Usually the client is the one who notices.
 
@@ -102,10 +104,10 @@ Code compares the answers with the accepted ones, and one wrong answer sends the
 Models are bad at "does this look right?" and decent at "how many fingers are on that hand?", so the reviewer answers
 facts and code decides.
 
-- **You give:** nothing. The agent picks the questions for each piece from a bank of 46
+- **You give:** nothing. The agent picks the questions for each piece from a bank of 57
 - **You get:** a verdict per question, with the tile or second it's about
 - **Covers:** faces, people and the set, hands and props, the product, logos and text, acting and motion, sound on
-  picture, the edit and the story
+  picture, continuity between shots, the edit and the story
 - **Inside:** [`SKILL.md`](skills/blind-review/SKILL.md),
   [`references/checklist.md`](skills/blind-review/references/checklist.md),
   [`scripts/grade.py`](skills/blind-review/scripts/grade.py)
@@ -132,6 +134,55 @@ dynamic mode that pumps.
 - **Inside:** [`SKILL.md`](skills/sound-mix/SKILL.md), [`scripts/sound_check.py`](skills/sound-mix/scripts/sound_check.py),
   [`scripts/master.py`](skills/sound-mix/scripts/master.py) (numpy and ffmpeg, no models)
 
+## The script supervisor · script-supervisor
+
+A video model ad-libs after the last line, a voice-over gets cut off one word early, and every still is drawn
+without knowing what the one before it showed. On one reel half of the review notes were goofs between shots: a
+shelf with other bottles in the next shot, two people in front of one backdrop, a notebook in the middle of a long
+table. They got past every automated check.
+
+The instrument reads the words and the clock: the transcript against the script, sound after the last heard word,
+dead air, the pace of the cuts, a take cut in the middle of a word. The continuity pass is nine fixed questions a
+fresh reviewer answers about what stands where from shot to shot, graded in code.
+
+```
+FAIL  script    WER 4.0%, last word heard 'more' vs script 'tonight'
+FAIL  tail      sound from 7.38 s, after the last heard word (-19 dBFS, speech peaks -13)
+PASS  dead_air  no voice for over 1 s at: nowhere
+PASS  pacing    10 shots, ASL 2.0 s (max 3), 20.4 s long (max 25)
+```
+
+- **You give:** the take or the cut, its script as text, and word times from any Whisper
+- **You get:** one PASS or FAIL line per check with the time, and a FAIL line per continuity goof
+- **Catches:** a changed or cut-off line, an ad-lib Whisper dropped, dead air, a reel that drags, a cut inside a
+  word, props and dressing that change between shots
+- **Misses:** delivery. Whether a line lands is the ear's call. Dissolves aren't counted as cuts
+- **Inside:** [`SKILL.md`](skills/script-supervisor/SKILL.md),
+  [`scripts/script_check.py`](skills/script-supervisor/scripts/script_check.py) (numpy and ffmpeg, no models); the
+  questions live in blind-review's [`checklist.md`](skills/blind-review/references/checklist.md)
+
+## The voice coach · voice-takes
+
+A video model doesn't hold a voice. Given the same voice description word for word, it spoke the next line 5.7
+semitones lower than the take that had been picked: the same face, another woman's voice. A TTS read with no pauses
+sounds rushed however good the voice is, and a voice changer can make a word start twice.
+
+The instrument measures each line's pitch against the picked take, the pauses in a read, and double attacks on
+word starts. The skill also holds how to pick a voice at all: on the moving face, never as clips under a still.
+
+```
+FAIL  pitch     line1/out.mp4: 161 Hz against 224 Hz in picked/out.mp4 (-5.7 st, max 3)
+PASS  pitch     line1_retake/out.mp4: 205 Hz against 224 Hz in picked/out.mp4 (-1.5 st, max 3)
+```
+
+- **You give:** the take the owner picked, and the takes to hold against it
+- **You get:** one PASS or FAIL line per take, with the Hz and the semitones
+- **Catches:** a line in another pitch than the picked voice, a rushed or run-on read, a stuttered word start
+- **Misses:** whether the voice is the right one. Two voices can share a pitch. A speaker-similarity score was
+  tried and left out: its "same voice" and "other voice" bands overlapped
+- **Inside:** [`SKILL.md`](skills/voice-takes/SKILL.md),
+  [`scripts/voice_check.py`](skills/voice-takes/scripts/voice_check.py) (numpy and ffmpeg, no models)
+
 ## How the checks were tested
 
 Each instrument was lifted out of a production pipeline and run against the original on private golden cases: frames
@@ -139,13 +190,18 @@ and takes that once reached a client, and approved ones. `frame_check.py` gave t
 on all 9 (within 1 mm), and `identity.py` with ArcFace reproduced the original scores exactly. `sound_check.py` was
 lifted from the same pipeline's final gate and gave the same numbers on three real reels: an approved one, one with a
 dull generated voice and one with a burst in a pause. The reels behind the hum and click thresholds are gone, so those
-two checks are tested on synthetic sound only. The golden files are client material, so they stay private. The tests in
+two checks are tested on synthetic sound only. `script_check.py` was lifted from that gate too: on two approved
+reels it passes what the gate passes (one of them only with its planned pauses and length given as flags, as the
+gate had them in its edit list), and it fails the kept take with an ad-lib after its last line. Its dead-air, pacing
+and cut-edge checks have no kept failing reel and are tested on synthetic cases. `voice_check.py` gave the original's
+verdicts on a kept rushed read and a kept stuttered word, and the original's pitch numbers on seven saved takes of
+one reel (within 2 Hz), which is all the proof the pitch threshold has. The golden files are client material, so they stay private. The tests in
 [`tests/`](tests) cover everything that needs no models and run on every push.
 
 ## The crew grows
 
-Next on set: the editor (`reel-edit`), the voice coach (`voice-takes`) and the script supervisor (the final gate:
-the transcript against the script, dead air, pacing).
+Next on set: the editor (`reel-edit`), and a check that a take is alive (lips against the voice, a frozen picture,
+a head that sways).
 
 ## Contributing
 

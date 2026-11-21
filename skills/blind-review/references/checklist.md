@@ -60,6 +60,31 @@ ones that apply; put the person's reference sheet beside each face. S = stills, 
 - A4 [T C] Real-speed movement, no reversal (down, up, down) and no restart of an action? yes | no.
 - A5 [T C] Mouths closed in silent shots and at every cut; in dialogue only the speaker's moves? yes | no.
 - A6 [T] The background that must move (sea, screen, crowd) moves? yes | no.
+- A7 [T C] While someone speaks, do the eyes leave the other person's eye level, up or down (not a blink), for about
+  half a second or more? no | yes. Fails: yes. (A look up on a line's first words. Blinks and eye closures were fine.)
+- A8 [T C] The speaker's hands and body while talking: busy with a real task (polishing, setting a glass down),
+  gesturing, or holding still? busy | gesturing | still. Fails: still. (Holding a prop still for a whole line read
+  "frozen like a statue", and a motion check passed it: a push-in moves every pixel.)
+
+## Continuity between shots (the script supervisor's pass)
+Before answering, write one line per shot: what stands on each shelf, counter and table, and in what state.
+- K1 [S C] One shelf, counter or table seen in two shots: the same things in the same places (count, colour and
+  shape per board)? same | changed | seen once. Fails: changed. (Three green bottles on a shelf at 0 s, yellow and
+  white ones at 5 s.)
+- K2 [S C] Do two people at different seats have the same backdrop? no | yes. Fails: yes.
+- K3 [S C] Every prop's state holds from shot to shot, or changes on screen: a stopper in or out, glasses full or
+  empty, who has a cup and who a glass? holds | changes unexplained. Fails: changes unexplained.
+- K4 [S C] Anything lying or standing where nobody would put it? no | yes. Fails: yes. (A notebook and a pen in the
+  middle of a long meeting table.)
+- K5 [S C] Is the dressing a real place's: bottles of varied real shapes with labels (no readable outside brand), no
+  row of identical blanks, nothing crooked or half-drawn, screens with believable content? yes | no. Fails: no.
+- K6 [S C] Is anything the shot is about cut by the frame's top or sides, or is half the frame empty table or floor?
+  no | yes. (A lead, not a fail: it once failed a framing the owner had approved.)
+- K7 [C] The surface the product stands on, the counter's edge and material, the window side: the same from every
+  camera? same | different. Fails: different. (Three different counters in one bar.)
+- K8 [S C] Does each person stand and sit as the script casts them (the boss like a boss), turned to what they look
+  at? yes | no. Fails: no.
+- K9 [C] Inside one beat, does a cut jump a person's pose or place? no | yes. Fails: yes.
 
 ## Sound on picture (give the reviewer a sync table: time, what is heard, the frame at that time)
 - S1 [C] Every effect plays over the shot that shows its source? match | loose | mismatch. Fails: mismatch.

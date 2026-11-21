@@ -36,7 +36,7 @@ wall (0) to the back wall (room[1]); "left/right/front/back" are as seen from th
   id = "maya"; at = [2.0, 1.5]; pose = "sits"; height = 1.70; faces = "sam"; look = "blonde bob, navy blazer"
   [[camera]]
   id = "A"; at = [4.8, 2.6]; h = 1.2; aim = "maya"; lens = 50; shots = "s2 s4 s8"; talk = true
-`pose` is sits or stands; `height` the person's height in metres (default 1.74): the blockout and the card place the
+`pose` is sits or stands (`seat` = the seat's height, default a chair's 0.47; a bar stool is 0.72); `height` the person's height in metres (default 1.74): the blockout and the card place the
 head, shoulders and hips by it (without it every head sat at one height and the stills drew everyone the same
 height). A person whose id is in the project's cast (cast/cast.toml) takes the cast's height unless the set gives one, and
 `refs` picks their images from refs/people/<id>/. `faces` a person or thing id, or a heading in degrees (0 = towards
@@ -45,7 +45,9 @@ focal length on the short side of the 9:16 frame (24 = wide, 35 = medium, 50 = s
 marks a camera that carries lines: its faces must be big enough to hold a lip-sync. `reverse = true` marks a
 deliberate reverse from behind the people (a TV seen from behind the couch, backs only): it is left out of the
 180 check. A thing with `h0` (its bottom height) is drawn in the blockout as a solid dark block from h0 to h, e.g. a
-wall TV; without it, as a top. `colour = [r, g, b]` gives a thing its blockout colour (a bottle on a table, h0 = the
+wall TV; without it, as a top. A thing with `person = true` is a background person in a fixed, counted place (a
+colleague beyond a glass wall, a guest at the far table): frame_check.py lets that many small faces be in the frame
+without calling them strangers. `colour = [r, g, b]` gives a thing its blockout colour (a bottle on a table, h0 = the
 table top). The numbers need not be exact: they must reproduce what the approved frames show. For a reel that already
 exists, build the set from its widest approved frame, then run `frame_check.py` on every approved shot against it: a set
 that fails its own footage is wrong.
@@ -107,11 +109,13 @@ def load(path):
 
 
 def up(p, z):
-    """A body height drawn for a STATURE-tall person, scaled to the person's `height`."""
-    if "height" not in p:
+    """A body height drawn for a STATURE-tall person, scaled to the person's `height`. A seated person sits at `seat`
+    (a bar stool's 0.72 m lifts the head 25 cm above a chair's), and only the body above the seat scales."""
+    if "height" not in p and "seat" not in p:
         return z
     base = SEAT if p["pose"] == "sits" else 0.0
-    return base + (z - base) * p["height"] / STATURE
+    seat = p.get("seat", SEAT) if p["pose"] == "sits" else 0.0
+    return seat + (z - base) * p.get("height", STATURE) / STATURE
 
 
 def find(s, key):
@@ -526,12 +530,12 @@ def block(s, cid, out, size=(540, 960)):
         for face in box(body, (0.18, 0.46), sh - 0.08, sh, yaw):           # shoulders
             add(face, p["colour"], None)
         if sits:
-            seat = np.array(p["at"]) - g2 * 0.05
-            for face in box(seat, (0.46, 0.46), 0.42, 0.47, yaw):          # seat
+            seat, dz = np.array(p["at"]) - g2 * 0.05, p.get("seat", SEAT) - SEAT
+            for face in box(seat, (0.46, 0.46), 0.42 + dz, 0.47 + dz, yaw):          # seat
                 add(face, (95, 95, 100), None)
-            for face in box(seat - g2 * 0.24, (0.06, 0.46), 0.47, 0.95, yaw):  # backrest
+            for face in box(seat - g2 * 0.24, (0.06, 0.46), 0.47 + dz, 0.95 + dz, yaw):  # backrest
                 add(face, (95, 95, 100), None)
-            for face in box(np.array(p["at"]) + g2 * 0.22, (0.36, 0.30), 0.40, 0.47, yaw):  # thighs
+            for face in box(np.array(p["at"]) + g2 * 0.22, (0.36, 0.30), 0.40 + dz, 0.47 + dz, yaw):  # thighs
                 add(face, p["colour"], None)
         else:
             for face in box(body, (0.18, 0.34), 0.0, hip, yaw):            # legs

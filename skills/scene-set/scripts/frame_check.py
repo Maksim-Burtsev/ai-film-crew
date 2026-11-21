@@ -230,11 +230,33 @@ def judge(exp, got, speaker=None, min_face=0.0, min_face_w=0.0):
     return r
 
 
+def background(s, cam, exp):
+    """How many of the set's background people (a [[thing]] with person = true) this camera holds, and the face size
+    under which a found face may be one of them: half the smallest face the set expects here. A single once FAILed
+    "2 faces" on a colleague beyond a glass wall, 71 px beside the speaker's 485."""
+    n = 0
+    for t in s.get("thing", []):
+        if t.get("person"):
+            q = cam.px(np.array([t["at"][0], t["at"][1], t.get("h0", 0.0) + t["h"] - 0.12], float))
+            n += bool(q and -0.05 < q[0] / scene.W < 1.05 and -0.05 < q[1] / scene.H < 1.05)
+    people = [e["face_px"] for e in exp if e["visible"] and e["face"] != "back"]
+    return n, (0.5 * min(people) if people else float("inf"))
+
+
+def cast_faces(got, n_bg, under):
+    """The found faces without the background people's: at most n_bg of them, the smallest, each under `under` px."""
+    bg = sorted((g for g in got if g["face_px"] < under), key=lambda g: g["face_px"])[:n_bg]
+    return [g for g in got if not any(g is b for b in bg)]
+
+
 def check(set_path, cid, media, fps=4, speaker=None, min_face=0.0, min_face_w=0.0):
     """Print one verdict line per check; return the number of FAILs."""
     s = scene.load(set_path)
-    exp = scene.view(s, scene.Cam(s, scene.find(s, cid)))
-    per = [(t, judge(exp, faces(img), speaker, min_face, min_face_w)) for t, img in frames(media, float(fps))]
+    cam = scene.Cam(s, scene.find(s, cid))
+    exp = scene.view(s, cam)
+    n_bg, under = background(s, cam, exp)
+    per = [(t, judge(exp, cast_faces(faces(img), n_bg, under), speaker, min_face, min_face_w))
+           for t, img in frames(media, float(fps))]
     names = list(dict.fromkeys(k for _, r in per for k in r))
     bad = 0
     for k in names:

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0 (2026-11-21)
+
+Two more crew members, and what three more reels taught the first five.
+
+- **script-supervisor** (new): `script_check.py` checks a take or a cut against its script: the words said, a
+  cut-off last line, sound after the last heard word (Whisper drops a short ad-lib), dead air, the pace of the cuts,
+  and a take cut in the middle of a word. The continuity pass asks a blind reviewer nine fixed questions about what
+  stands where from shot to shot.
+- **voice-takes** (new): `voice_check.py` holds each line's pitch against the take the owner picked, fails a rushed
+  or run-on read and a word that starts twice. The skill covers how to audition a voice: on the moving face.
+- **blind-review**: 11 new questions, 57 in the bank: continuity between shots (K1-K9), eyes that leave the eyeline
+  mid-line (A7), a speaker who holds still (A8).
+- **scene-set**: `seat` gives a seated person's seat height (a bar stool lifts the head 25 cm), and a thing with
+  `person = true` is a counted background person whose small face `frame_check.py` no longer calls a stranger.
+- **product-size**: measure the prop beside the product too, and keep the product out from under the app's interface.
+- **recurring-cast**: how shape words and repeated passes aged a face, and the recipe that fixed it.
+
 ## 0.2.0 (2026-11-01)
 
 One more crew member, and a fix for over-the-shoulder shots.

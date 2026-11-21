@@ -81,3 +81,17 @@ def test_over_the_shoulder_back_is_in_frame_and_the_look_is_just_past_the_lens(t
     assert "close to the lens and out of focus, filling the frame's right edge (about 24% of its width)" in card
     assert "off frame" not in card
     assert scene.warnings(s) == ([], [])
+
+
+def test_a_bar_stool_lifts_a_seated_head_by_its_extra_height():
+    chair = {"pose": "sits"}
+    stool = {"pose": "sits", "seat": 0.72}
+    assert abs(scene.up(stool, scene.HEAD["sits"]) - scene.up(chair, scene.HEAD["sits"]) - 0.25) < 1e-9
+    assert abs(scene.up({"pose": "stands", "seat": 0.72}, 1.62) - 1.62) < 1e-9          # a seat means nothing to someone standing
+
+
+def test_background_people_are_not_strangers():
+    speaker, colleague, guest = {"face_px": 485}, {"face_px": 71}, {"face_px": 60}
+    assert frame_check.cast_faces([speaker, colleague], n_bg=1, under=240) == [speaker]
+    assert frame_check.cast_faces([speaker, colleague, guest], n_bg=1, under=240) == [speaker, colleague]   # one too many
+    assert frame_check.cast_faces([speaker, colleague], n_bg=0, under=240) == [speaker, colleague]

@@ -36,6 +36,16 @@ Ask the user for the real size. Never guess it from a picture.
 The sheet puts the real product at true scale beside the one in the frame. Give it to the blind review: with the
 sheet, Claude judged size right 10 times out of 10; from bare frames, 5 out of 10.
 
+## Measure what stands beside it
+A prop next to the product sets its apparent size. A 9 cm glass drawn as a 12-15 cm highball made a full-size
+bottle beside it read small. Write a card for each such prop (a glass, a phone) and run `size.py` with it too.
+A prop on a table gets a FLAG, not a verdict: judge it on the sheet.
+
+## Keep it out from under the interface
+Nothing the viewer must read sits in the bottom ~20 % or the right ~12 % of a 9:16 frame: Reels and TikTok lay the
+account name, the caption and the buttons there. A product in the bottom 17 % was covered on the phone. This is a
+rule for the storyboard and the blind review, not a measured check.
+
 ## When the product is too big
 1. Start the shot with the product on a table at true size and let the take lift it.
 2. Or paste the real product into the still at the measured scale before animating it. Hands over the product make

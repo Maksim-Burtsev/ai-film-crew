@@ -35,6 +35,14 @@ Two scripts, run from the project root with `uv run`:
 Done when: every planned shot names its camera, `plan` prints no warnings, and every approved still passes
 `frame_check.py` and `grade` (or each FAIL was looked at and answered).
 
+## Seats and background people
+- **A seat has a height.** `seat = 0.72` on a person who sits on a bar stool (the default is a chair's 0.47 m): the
+  stool lifts the head 25 cm, and without it the card and the layout image put a bar guest at table height.
+- **Background people are part of the set**, in fixed, counted places: `[[thing]]` with `person = true` (a colleague
+  beyond a glass wall, guests at the far table). Build them with the room, before the first still. A real place is
+  never empty, and an extra who isn't in the set moves from shot to shot. `frame_check.py` lets that many small faces
+  be in frame; a single once failed "2 faces" on a colleague 71 px tall behind a 485 px speaker.
+
 ## What frame_check can't see
 It measures faces, not meaning. It misses a medium shot drawn where the set wants a close-up, and a hand over a face
 reads as no face. A FLAG means "look yourself". When it disagrees with your eye, the blind review decides.
